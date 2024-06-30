@@ -1,6 +1,9 @@
+from collections import deque
+
+
 def html2markdown(html):
     '''Take in html text as input and return markdown'''
-    # html = 'This is in <em>italics</em>. So is <em>this</em>'
+
     html = html.replace('\n', ' ')
     if '<em>' or '</em>' in html:
         html = html.replace('<em>', '*').replace('</em>', '*')
@@ -83,7 +86,7 @@ def getPhrases(link):
 
 
 def getPrefixAndSuffix(link):
-    result = []
+    result = deque()
     temp = link.split('</a>')
     for s in temp:
         if 'http' in s:
@@ -98,8 +101,8 @@ def formatUrlToMd(url: str, phrase: str) -> str:
     return f'[{phrase}]({url})'    
 
 
-def getFormattedUrs(linksAndPhrases: list[tuple]) -> list[str]:
-    result = []
+def getFormattedUrs(linksAndPhrases: list[tuple]) -> deque[str]:
+    result = deque()
     
     for url, phrase in linksAndPhrases:
         result.append(formatUrlToMd(url, phrase))
@@ -111,17 +114,11 @@ def convertToMd(urls, fillers):
     result = ''
     while urls or fillers:
         if fillers:
-            result += fillers.pop(0)
+            result += fillers.popleft()
         if urls:
-            result += urls.pop(0)
+            result += urls.popleft()
     
     return result
         
 
    
-# print(html2markdown('This is the <a href="https://pypi.org/project/html2markdown/">link</a> to the html2markdown package and ' +
-#             'here is <a href="https://github.com/dlon/html2markdown">another link</a> to the project homepage'))
-
-
-
-

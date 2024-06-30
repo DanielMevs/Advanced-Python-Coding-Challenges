@@ -5,6 +5,7 @@ SPACES = re.compile(r'\s+')
 PARAGRAPHS = re.compile(r'<p>(.+?)</p>')
 URLS = re.compile(r'<a href="(.+?)">(.+?)</a>')
 
+
 def html2markdown(html):
     '''Take in html text as input and return markdown'''
     markdown = ITALICS.sub(r'*\1*', html)
