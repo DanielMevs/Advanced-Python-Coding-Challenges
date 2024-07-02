@@ -1,7 +1,9 @@
-# Source of data: https://www.arrs.run/
-# This dataset has race times for women 10k runners from the Association of Road Racing Statisticians
-# Assume a year has 365.25 days
-from datetime import date, timedelta
+""" Source of data: https://www.arrs.run/
+ This dataset has race times for women 10k runners
+ from the Association of Road Racing Statisticians
+ Assume a year has 365.25 days
+ """
+from datetime import date, timedelta, datetime
 from time import strptime
 
 
@@ -43,6 +45,10 @@ def get_event_date(line):
     return ' '.join([day, month, year])
 
 
+def get_duration(line):
+    return line.split()[0][:5]
+
+
 def calculate_age(eventDate):
     rhinesBirthDay = date(1974, 7, 1)
     return (
@@ -58,9 +64,12 @@ def main():
     for line in data.split('\n')[1:]:
         if 'Jennifer Rhines' in line:
             eventDateStr = get_event_date(line)
-            day, month, year = eventDateStr.split()
-            currentDate = date(day=day, month=month, year=year)
-            timesAndAges.append((eventDateStr, calculate_age(currentDate)))
+            print(eventDateStr)
+            currentDate = datetime.strptime(eventDateStr, '%d %b %Y')
+            timesAndAges.append(
+                (get_duration(line), calculate_age(currentDate)))
+            
+    # slowest = get_age_slowest_times(timesAndAges)
+    # print(slowest)
 
-    slowest = get_age_slowest_times(timesAndAges)
-    return slowest
+
