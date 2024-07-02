@@ -57,7 +57,10 @@ def main():
     timesAndAges = []
     for line in data.split('\n')[1:]:
         if 'Jennifer Rhines' in line:
-            timesAndAges.append(get_event_time(line))
+            eventDateStr = get_event_date(line)
+            day, month, year = eventDateStr.split()
+            currentDate = date(day=day, month=month, year=year)
+            timesAndAges.append((eventDateStr, calculate_age(currentDate)))
 
     slowest = get_age_slowest_times(timesAndAges)
     return slowest
