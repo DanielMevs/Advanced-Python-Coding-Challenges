@@ -20,9 +20,17 @@ def get_event_time(line):
     return (line[0], calculate_age(get_event_date(line)))
     
 
-def get_age_slowest_times(timesAndAges):
+def get_age_slowest_times():
     '''Return a tuple (age, race_time) where:
        age: AyBd is in this format where A and B are integers'''
+    data = get_data()
+    timesAndAges = []
+    for line in data.split('\n')[1:]:
+        if 'Rhines' in line:
+            eventDateStr = get_event_date(line)
+            currentDate = datetime.strptime(eventDateStr, '%d %b %Y')
+            timesAndAges.append(
+                (get_duration(line), calculate_age(currentDate)))
     s = strptime('00:00', '%M:%S')
     slowest = timedelta(minutes=s.tm_min, seconds=s.tm_sec)
     result = None
@@ -33,7 +41,6 @@ def get_age_slowest_times(timesAndAges):
         if current > slowest:
             slowest = current
             result = (age, time)
-    
     return result
 
 
@@ -51,25 +58,22 @@ def get_duration(line):
 
 def calculate_age(eventDate):
     rhinesBirthDay = date(1974, 7, 1)
-    return (
-        eventDate.year - rhinesBirthDay.year -
-        ((rhinesBirthDay.month, rhinesBirthDay.day) 
-            < (eventDate.month, eventDate.day))
+    eventBeforeBirthday = (
+        (rhinesBirthDay.month, rhinesBirthDay.day)
+        > (eventDate.month, eventDate.day))
+    
+    year = eventDate.year - rhinesBirthDay.year + eventBeforeBirthday
+    temp = datetime(
+        year=rhinesBirthDay.year + year,
+        day=rhinesBirthDay.day, month=rhinesBirthDay.month
     )
 
+    if eventBeforeBirthday:
+        daysDiff = abs(eventDate - temp)
+    else:
+        daysDiff = abs(temp - eventDate)
 
-def main():
-    data = get_data()
-    timesAndAges = []
-    for line in data.split('\n')[1:]:
-        if 'Jennifer Rhines' in line:
-            eventDateStr = get_event_date(line)
-            print(eventDateStr)
-            currentDate = datetime.strptime(eventDateStr, '%d %b %Y')
-            timesAndAges.append(
-                (get_duration(line), calculate_age(currentDate)))
-            
-    # slowest = get_age_slowest_times(timesAndAges)
-    # print(slowest)
-
+    age = str(year) + 'y' + str(daysDiff.days) + 'd'
+    return age
+    
 
